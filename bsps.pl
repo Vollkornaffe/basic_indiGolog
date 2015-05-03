@@ -25,8 +25,24 @@ poss(takeSheep_toA, and(sheep_pos = a, guy_pos = a)).
 poss(takeSheep_toB, and(sheep_pos = b, guy_pos = b)).
 poss(takeCabbage_toA, and(cabbage_pos = a, guy_pos = a)).
 poss(takeCabbage_toB, and(cabbage_pos = b, guy_pos = b)).
-poss(guyTakes_toA, guy_pos = b).
-poss(guyTakes_toB, guy_pos = a).
+poss(guyTakes_toA, and(
+			and(
+				or(
+					neg(sheep_pos = wolf_pos),
+					sheep_pos = a), 
+				or(
+					neg(cabbage_pos = sheep_pos),
+					cabbage_pos = a)), 
+			guy_pos = b)).
+poss(guyTakes_toB, and(
+			and(
+				or(
+					neg(sheep_pos = wolf_pos),
+					sheep_pos = b), 
+				or(
+					neg(cabbage_pos = sheep_pos),
+					cabbage_pos = b)), 
+			guy_pos = a)).
 
 causes_val(takeWolf_toA, wolf_pos, a, true).
 causes_val(takeWolf_toB, wolf_pos, b, true).
@@ -47,20 +63,6 @@ execute(guyTakes_toA, _) :- true.
 execute(guyTakes_toB, _) :- true.
 
 exog_occurs(_Act) :- fail.
-
-proc(sheepIsSafe, [
-	?(or(
-		neg(wolf_pos = sheep_pos), 
-		(guy_pos = sheep_pos)
-	))
-]).
-
-proc(cabbageIsSafe, [
-	?(or(
-		neg(sheep_pos = cabbage_pos), 
-		(guy_pos = cabbage_pos)
-	))
-]).
 
 proc(main, [
 	while(or(or(wolf_pos = a, sheep_pos = a), cabbage_pos = a), [
@@ -86,7 +88,5 @@ proc(main, [
 				)
 			)
 		),
-		sheepIsSafe,
-		cabbageIsSafe
 	])
 ]).
